@@ -4,14 +4,18 @@ MAINTAINER Jonathan Mayer <jonathan.mayer@ecountability.co.uk>
 # Let the container know that there is no TTY
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install necessary packages for proper system state
+RUN apt-get update && apt-get install -y wget ca-certificates
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main 9.5" > /etc/apt/sources.list.d/pgdg.list && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+
 RUN apt-get -y update && apt-get install -y \
     build-essential \
     cmake \
     curl \
     git \
-    postgresql-9.4 \
-    postgresql-server-dev-9.4 \
+    postgresql-9.5 \
+    postgresql-server-dev-9.5 \
     libgeos-c1 \ 
     libgdal-dev \ 
     libproj-dev \ 
@@ -23,7 +27,8 @@ RUN apt-get -y update && apt-get install -y \
     docbook-mathml
     
 RUN wget http://postgis.net/stuff/postgis-2.3.0dev.tar.gz \
-&& tar xfj geos-3.5.0.tar.bz2 \
+&& tar xfz postgis-2.3.0dev.tar.gz \
+&& cd postgis-2.3.0dev \
 && make \
 && make install \
 && ldconfig \
