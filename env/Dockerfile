@@ -37,10 +37,9 @@ RUN mkdir -p /etc/my_init.d
 ADD init_db_script.sh /etc/my_init.d/init_db_script.sh
 ADD init_db.sh /root/init_db.sh
 
-# ---------- Final cleanup --------------
-#
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENTRYPOINT ["/etc/service/postgresql/run/postgresql.sh"]
+
+CMD ["/root/init_db.sh"]
 
 
 
