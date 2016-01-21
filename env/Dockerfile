@@ -12,8 +12,8 @@ RUN git clone https://github.com/pramsey/pgsql-http.git \
 && make install \
 && ldconfig
 
-RUN mkdir /etc/service/postgresql
-ADD postgresql.sh /etc/service/postgresql/run
+#RUN mkdir /etc/service/postgresql
+
 
 # Adjust PostgreSQL configuration so that remote connections to the
 # database are possible. 
@@ -32,12 +32,14 @@ VOLUME  ["/data", "/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql
 
 # add database setup upon image start
 ADD pgpass /root/.pgpass
-RUN chmod 700 /root/.pgpass
-RUN mkdir -p /etc/my_init.d
-ADD init_db_script.sh /etc/my_init.d/init_db_script.sh
-ADD init_db.sh /root/init_db.sh
 
-ENTRYPOINT ["/etc/service/postgresql/run/postgresql.sh"]
+RUN mkdir -p /etc/my_init.d
+ADD init_db_script.sh /root/init_db_script.sh
+ADD init_db.sh /root/init_db.sh
+ADD postgresql.sh /root/postgresql.sh 
+RUN chmod 700 /root/*
+
+ENTRYPOINT ["/root/postgresql.sh"]
 
 CMD ["/root/init_db.sh"]
 
