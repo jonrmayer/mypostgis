@@ -10,34 +10,26 @@ RUN apt-get -y update && apt-get install -y \
     cmake \
     curl \
     git \
-    libboost-all-dev \
-    libbz2-dev \
-    libstxxl-dev \
-    libstxxl-doc \
-    libstxxl1 \
-    libtbb-dev \
-    libxml2-dev \
-    libzip-dev \
-    lua5.1 \
-    liblua5.1-0-dev \
-    libluabind-dev \
-    libluajit-5.1-dev \
-    pkg-config
+    postgresql-9.4 \
+    postgresql-server-dev-9.4 \
+    libgeos-c1 \ 
+    libgdal-dev \ 
+    libproj-dev \ 
+    libjson0-dev \ 
+    libxml2-dev \ 
+    libxml2-utils \ 
+    xsltproc \
+    docbook-xsl \
+    docbook-mathml
     
-RUN mkdir -p /osrm-src \
- && mkdir -p /osrm-build \
- && mkdir -p /osrm-data
- 
-WORKDIR /osrm-build
+RUN wget http://postgis.net/stuff/postgis-2.3.0dev.tar.gz \
+&& tar xfj geos-3.5.0.tar.bz2 \
+&& make \
+&& make install \
+&& ldconfig \
+&& make comments-install
+    
 
-ENV aaa bbb
-RUN git clone https://github.com/DennisOSRM/Project-OSRM.git /osrm-src \
- && cmake /osrm-src \
- && make \
- && mv /osrm-src/profiles/foot.lua profile.lua \
- && mv /osrm-src/profiles/lib/ lib \
- && echo "disk=/tmp/stxxl,25000,syscall" > .stxxl \
- && rm -rf /osrm-src
  
 # Cleanup --------------------------------
 
@@ -46,8 +38,4 @@ RUN apt-get clean \
 
 # Publish --------------------------------
 
-COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
 
-EXPOSE 5000
